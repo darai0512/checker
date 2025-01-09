@@ -7,7 +7,11 @@ import {
 // mnopqrstu + v
 // 5: eeee* ~ enj3*, 数字のみ 000** - 027**, 111** - 669**
 // 7: eeeeee* ~ eeenjq*
-const chars = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('')
+const chars = 'bcdefghijklmnopqrstuvwxyz1234567890a'.split('')
+
+const reFirst3 = /^(.)\1\1/
+const re4 = /(.)\1\1\1+/
+
 const path = process.env.TARGET
 const start = process.env.START ? Number(process.env.START) : (new Date()).getHours() * 2
 for (let i = 0;i < start;i++) {
@@ -21,14 +25,16 @@ for (let len = 5;len<6;len++) {
 }
 // ssh-keygen -p -f path
 async function nestAsync(key, len) {
-  if (len === 5 && key.slice(0,3) === 'eee') return
+  if (reFirst3.test(key)) return console.log('skip: ', key + '*'.repeat(len - key.length))
   for (const c of chars) {
     let execKey = key + c
-    if (execKey.length !== len) {
+    if (re4.test(execKey)) {
+      // console.log('skip: ', execKey + '*'.repeat(len - execKey.length))
+      continue
+    } else if (execKey.length !== len) {
       await nestAsync(execKey, len)
       continue
     }
-    // if (Number(execKey)) continue
     await setTimeout(30)
     exec(`ssh-keygen -y -P "${execKey}" -f ${path}`, (error, stdout, stderr) => {
       if (error) {
@@ -39,5 +45,5 @@ async function nestAsync(key, len) {
       process.exit(0);
     })
   }
-  if (len - key.length >= 2) console.log(key + '*'.repeat(len - key.length))
+  if (len - key.length >= 1) console.log(key + '*'.repeat(len - key.length))
 }
