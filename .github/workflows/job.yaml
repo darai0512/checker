@@ -5,10 +5,12 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 */1 * * *"
+    - cron: "0 */3 * * *"
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 # artifactはjob間データ共有には使用不可
@@ -29,9 +31,12 @@ jobs:
         env:
           TARGET: target
           LIST: ./checked.txt
+      - run: cat ./checked.txt
       - run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "Daiki Arai"
+          git config user.email "darai0512@yahoo.co.jp"
           git add ./checked.txt
           git commit -m "update checked list"
           git push
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

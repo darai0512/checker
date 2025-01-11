@@ -7,7 +7,7 @@ const reFirst3 = /^(.)\1\1/
 const re4 = /(.)\1\1\1+/
 
 // llml* ~ l4k** t3c0* v5ee* x7gj* z9it* 2ajx* 4cme* 6emt* 0is2* bku2* dmvm* foyb* js4m* foxd* hqzb* nw7u* py9s* r1a9*
-let execKey = 't57--'
+let execKey = 't8a--'
 let output = 0
 if (process.env.LIST) {
   try {
@@ -45,7 +45,7 @@ function next(key, cursor) {
 
 const len = execKey.length
 let c = 1
-const stop = 100000 // 120000 = 60 * 60 * 1000 / 30
+const stop = 2500 // 270000 = 3 * 60 * 60 * 1000 / 40
 // todo multi-process, multi thread
 while (c++ < stop) {
   execKey = next(execKey, len)
@@ -59,6 +59,6 @@ while (c++ < stop) {
     console.error(execKey, stdout)
     process.exit(1)
   })
-  await setTimeout(30)
+  await setTimeout(40)
 }
 process.exit(0)
