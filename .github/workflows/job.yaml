@@ -11,21 +11,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+# artifactはjob間データ共有には使用不可
+# https://docs.github.com/ja/actions/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow
+# - uses: actions/download-artifact@v4
+#   with:
+#     name: before
+#     path: ./
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org/
-      - run: echo -n "${{ env.TOKEN_BASE64 }}" | base64 --decode > ./test
+      - run: echo -n "${{ env.TOKEN_BASE64 }}" | base64 --decode > ./target
         env:
           TOKEN_BASE64: ${{secrets.TOKEN_BASE64}}
-      - run: chmod 600 ./test
-      - run: node key.js > current.txt
+      - run: chmod 600 ./target
+      - run: node key.js
         env:
-          TARGET: test
-          BEFORE: ./before.txt
-      - run: mv current.txt before.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: before
-          path: ./before.txt
+          TARGET: target
+          LIST: ./checked.txt
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ./checked.txt
+          git commit -m "update checked list"
+          git push

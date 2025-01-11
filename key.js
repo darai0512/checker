@@ -1,18 +1,20 @@
 import { exec } from 'node:child_process'
-import { readFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { setTimeout } from 'node:timers/promises'
 const chars = 'abcdefghijklmnopqrstuvwxyz1234567890-'.split('')
 const lastIdx = chars.length - 1
 const reFirst3 = /^(.)\1\1/
 const re4 = /(.)\1\1\1+/
 
-// llml* ~ lu7g0 t3c0* v5ee* x7gj* z9it* 2ajx* 4cme* 6emt* 0is2* bku2* dmvm* foyb* js4m* foxd* hqzb* nw7u* py9s* r1a9*
-let execKey = 't3faa'
-if (process.env.BEFORE) {
+// llml* ~ l4k** t3c0* v5ee* x7gj* z9it* 2ajx* 4cme* 6emt* 0is2* bku2* dmvm* foyb* js4m* foxd* hqzb* nw7u* py9s* r1a9*
+let execKey = 't57--'
+let output = 0
+if (process.env.LIST) {
   try {
-    const befores = readFileSync(process.env.BEFORE, 'utf8').split('\n')
-    execKey = befores.length > 1 ? befores[befores.length - 2].trim() : execKey
-    execKey = execKey.replace('*', '-')
+    const bef = readFileSync(process.env.LIST, 'utf8')
+    const key = bef.trim().replaceAll('*', '-')
+    execKey = key.length === execKey.length ? key : execKey
+    output = process.env.LIST
   } catch(e) {
     console.error(e)
   }
@@ -32,7 +34,7 @@ function next(key, cursor) {
   if (index === lastIdx) {
     idxes[cursor - 1] = 0
     cursor -= 1
-    if (cursor < key.length - 1) console.log(key.slice(0, cursor) + '*'.repeat(key.length - cursor))
+    if (cursor < key.length - 1) writeFileSync(output, key.slice(0, cursor) + '*'.repeat(key.length - cursor))
     return next(key, cursor, chars.indexOf(key.slice(cursor - 1, cursor))) + chars[0]
   }
   index += 1
@@ -43,7 +45,7 @@ function next(key, cursor) {
 
 const len = execKey.length
 let c = 1
-const stop = 140000 // 144000 = 60 * 60 * 1000 / 25
+const stop = 100000 // 120000 = 60 * 60 * 1000 / 30
 // todo multi-process, multi thread
 while (c++ < stop) {
   execKey = next(execKey, len)
@@ -57,6 +59,6 @@ while (c++ < stop) {
     console.error(execKey, stdout)
     process.exit(1)
   })
-  await setTimeout(25)
+  await setTimeout(30)
 }
 process.exit(0)
