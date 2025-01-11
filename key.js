@@ -1,15 +1,24 @@
-import { execSync, exec } from 'node:child_process'
-import {
-  setTimeout,
-} from 'node:timers/promises';
+import { exec } from 'node:child_process'
+import { readFileSync } from 'node:fs'
+import { setTimeout } from 'node:timers/promises'
 const chars = 'abcdefghijklmnopqrstuvwxyz1234567890-'.split('')
 const lastIdx = chars.length - 1
-// multi-process, multi thread
 const reFirst3 = /^(.)\1\1/
 const re4 = /(.)\1\1\1+/
 
-let execKey = (process.env.KEY || 'lu7g0').trim()  // llml* - lu7g0
-const path = process.env.TARGET
+// llml* ~ lu7g0 t3c0* v5ee* x7gj* z9it* 2ajx* 4cme* 6emt* 0is2* bku2* dmvm* foyb* js4m* foxd* hqzb* nw7u* py9s* r1a9*
+let execKey = 't3faa'
+if (process.env.BEFORE) {
+  try {
+    const befores = readFileSync(process.env.BEFORE, 'utf8').split('\n')
+    execKey = befores.length > 1 ? befores[befores.length - 2].trim() : execKey
+    execKey = execKey.replace('*', '-')
+  } catch(e) {
+    console.error(e)
+  }
+}
+console.error(`start: ${execKey}`)
+const targetPath = process.env.TARGET
 const idxes = [
   chars.indexOf(execKey.slice(0, 1)) || 0,
   chars.indexOf(execKey.slice(1, 2)) || 0,
@@ -33,21 +42,21 @@ function next(key, cursor) {
 
 
 const len = execKey.length
-while (true) {
+let c = 1
+const stop = 140000 // 144000 = 60 * 60 * 1000 / 25
+// todo multi-process, multi thread
+while (c++ < stop) {
   execKey = next(execKey, len)
 
   // skip
   if (reFirst3.test(execKey) || re4.test(execKey)) continue
 
-  exec(`ssh-keygen -y -P "${execKey}" -f ${path}`, (error, stdout, stderr) => {
-    if (error) {
-      if (!error.message.includes('incorrect passphrase supplied to decrypt private key')) console.log(execKey, error)
-      return
-    }
-    console.log(execKey, stdout)
-    process.exit(0);
+  exec(`ssh-keygen -y -P "${execKey}" -f ${targetPath}`, (error, stdout, stderr) => {
+    // if (!error.message.includes('incorrect passphrase supplied to decrypt private key')) console.error(execKey, error)
+    if (error) return
+    console.error(execKey, stdout)
+    process.exit(1)
   })
-  await setTimeout(20)
-
-  // log
+  await setTimeout(25)
 }
+process.exit(0)
