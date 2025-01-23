@@ -45,7 +45,7 @@ function next(key, cursor) {
 
 const len = execKey.length
 let c = 1
-const stop = 300000 // 360000 = 4 * 60 * 60 * 1000 / 40
+const stop = 280000 // 360000 = 4 * 60 * 60 * 1000 / 40
 // todo multi-process, multi thread
 while (c++ < stop) {
   execKey = next(execKey, len)
