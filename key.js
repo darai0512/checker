@@ -7,7 +7,7 @@ const reFirst3 = /^(.)\1\1/
 const re4 = /(.)\1\1\1+/
 
 // llml* ~ l4k** t3c0* v5ee* x7gj* z9it* 2ajx* 4cme* 6emt* 0is2* bku2* dmvm* foyb* js4m* foxd* hqzb* nw7u* py9s* r1a9*
-let execKey = 't8a--'
+let execKey = 'aabaab'
 let output = 0
 if (process.env.LIST) {
   try {
@@ -27,6 +27,7 @@ const idxes = [
   chars.indexOf(execKey.slice(2, 3)) || 0,
   chars.indexOf(execKey.slice(3, 4)) || 0,
   chars.indexOf(execKey.slice(4, 5)) || 0,
+  chars.indexOf(execKey.slice(5, 6)) || 0,
 ]
 
 function next(key, cursor) {
